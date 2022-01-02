@@ -40,6 +40,10 @@ class Snake
             cout<<endl;
         }
     }
+    void input()
+    {
+        
+    }
 };
 
 int main()

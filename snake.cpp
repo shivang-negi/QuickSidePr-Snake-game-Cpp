@@ -43,16 +43,16 @@ class Snake
                         cout<<"*";
                     else
                     {
-                        bool print = false;
+                        bool check = false;
                         for (int k = 0; k < length; k++)
                         {
                             if (tailX[k] == j && tailY[k] == i)
                             {
                                 cout << "=";
-                                print = true;
+                                check = true;
                             }
                         }
-                        if (!print)
+                        if (!check)
                             cout << " ";
                     }
                 }                
@@ -65,6 +65,20 @@ class Snake
     }
     void work()
     {
+        int prevX = tailX[0];
+        int prevY = tailY[0];
+        int prevnX, prevnY;
+        tailX[0] = monitorY;
+        tailY[0] = monitorX;
+        for (int i = 1; i < length; i++)
+        {
+            prevnX = tailX[i];
+            prevnY = tailY[i];
+            tailX[i] = prevX;
+            tailY[i] = prevY;
+            prevX = prevnX;
+            prevY = prevnY;
+        }
         if(monitorX==targetX && monitorY==targetY)
         {
             score++;
@@ -99,40 +113,24 @@ class Snake
     }
     void input()
     {
-        int prevX = tailX[0];
-        int prevY = tailY[0];
-        int prev2X, prev2Y;
-        tailX[0] = monitorY;
-        tailY[0] = monitorX;
-        for (int i = 1; i < length; i++)
-        {
-            prev2X = tailX[i];
-            prev2Y = tailY[i];
-            tailX[i] = prevX;
-            tailY[i] = prevY;
-            prevX = prev2X;
-            prevY = prev2Y;
-        }
-        
-
-        if(GetKeyState('A') & 0x8000/*Check if high-order bit is set (1 << 15)*/)
+        if(GetKeyState('A') & 0x8000)
         {
             cout<<dir;
             dir="left";
         }
-        if(GetKeyState('D') & 0x8000/*Check if high-order bit is set (1 << 15)*/)
+        if(GetKeyState('D') & 0x8000)
         {
             dir="right";
         }
-        if(GetKeyState('S') & 0x8000/*Check if high-order bit is set (1 << 15)*/)
+        if(GetKeyState('S') & 0x8000)
         {
             dir="down";
         }
-        if(GetKeyState('W') & 0x8000/*Check if high-order bit is set (1 << 15)*/)
+        if(GetKeyState('W') & 0x8000)
         {
             dir="up";
         }
-        if(GetKeyState('X') & 0x8000/*Check if high-order bit is set (1 << 15)*/)
+        if(GetKeyState('X') & 0x8000)
         {
             endOfGame=true;
         }

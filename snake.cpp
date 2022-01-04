@@ -6,9 +6,11 @@ using namespace std;
 class Snake
 {
     public:
-    int height,width,targetX,targetY;
+    int height,width,targetX,targetY,score=0;
     int monitorX,monitorY;
-    string dir="right",str="=";
+    int tailX[50],tailY[50],length=0;
+    string dir="right";
+    bool endOfGame=false;
     Snake(int x,int y)
     {
         height=x;
@@ -18,10 +20,10 @@ class Snake
         monitorX=height/2;
         monitorY=width/2;
     }
-    bool endOfGame=false;
     void map(int height,int width)
     {
         cout << "\033[2J\033[1;1H";
+        cout<<"Score:"<<score<<endl;
         int i,j;
         for(i=0;i<height;i++)
         {
@@ -36,11 +38,23 @@ class Snake
                 else
                 {   
                     if(i==monitorX && j==monitorY)
-                        cout<<str;
+                        cout<<"=";
                     else if(i==targetX && j==targetY)
                         cout<<"*";
                     else
-                        cout<<" ";
+                    {
+                        bool print = false;
+                        for (int k = 0; k < length; k++)
+                        {
+                            if (tailX[k] == j && tailY[k] == i)
+                            {
+                                cout << "=";
+                                print = true;
+                            }
+                        }
+                        if (!print)
+                            cout << " ";
+                    }
                 }                
                 
                 if(j==(width-1))
@@ -49,13 +63,15 @@ class Snake
             cout<<endl;
         }
     }
-    void target()
-    {
-        targetX=rand()%(height-2) + 1;
-        targetY=rand()%(width-1) +1;
-    }
     void work()
     {
+        if(monitorX==targetX && monitorY==targetY)
+        {
+            score++;
+            length++;
+            targetX=rand()%(height-2) + 1;
+            targetY=rand()%(width-1) +1;
+        }
         if(dir=="right")
         {
             monitorY++;
@@ -70,9 +86,9 @@ class Snake
         }
         if(dir=="up")
         {
+            monitorX--;
             if(monitorX==1)
                 monitorX=height-1;
-            monitorX--;
         }
         if(dir=="down")
         {
@@ -83,6 +99,22 @@ class Snake
     }
     void input()
     {
+        int prevX = tailX[0];
+        int prevY = tailY[0];
+        int prev2X, prev2Y;
+        tailX[0] = monitorY;
+        tailY[0] = monitorX;
+        for (int i = 1; i < length; i++)
+        {
+            prev2X = tailX[i];
+            prev2Y = tailY[i];
+            tailX[i] = prevX;
+            tailY[i] = prevY;
+            prevX = prev2X;
+            prevY = prev2Y;
+        }
+        
+
         if(GetKeyState('A') & 0x8000/*Check if high-order bit is set (1 << 15)*/)
         {
             cout<<dir;
@@ -121,11 +153,13 @@ int main()
         cout << "\033[2J\033[1;1H";
         while(game.endOfGame!=true)
         {
-            Sleep(250); 
-            game.input();
+            Sleep(150); 
             game.map(game.height,game.width);
+            game.input();
             game.work();
         }
+        cout<<"\nGAME OVER!!!\n\n";
+        cout<<"Your score is :"<<game.score;
     }
     return 0;
 }

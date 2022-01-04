@@ -8,12 +8,12 @@ class Snake
     public:
     int height,width,targetX,targetY;
     int monitorX,monitorY;
-    string dir="right";
+    string dir="right",str="=";
     Snake(int x,int y)
     {
         height=x;
         width=y;
-        targetX=rand()%(height-2) + 1;
+        targetX=rand()%(height-1) + 1;
         targetY=rand()%(width-1) +1;
         monitorX=height/2;
         monitorY=width/2;
@@ -27,16 +27,16 @@ class Snake
         {
             for(j=0;j<width;j++)
             {
-                if(i==0)
-                    cout<<"#";
+                if(i==0) 
+                    cout<<"_";
                 else if(j==0)
-                    cout<<"#";
+                    cout<<"|";
                 else if(i==(height-1))
-                    cout<<"#";
+                    cout<<"_";
                 else
                 {   
                     if(i==monitorX && j==monitorY)
-                        cout<<"=";
+                        cout<<str;
                     else if(i==targetX && j==targetY)
                         cout<<"*";
                     else
@@ -44,7 +44,7 @@ class Snake
                 }                
                 
                 if(j==(width-1))
-                    cout<<"#";
+                    cout<<"|";
             }
             cout<<endl;
         }
@@ -70,9 +70,9 @@ class Snake
         }
         if(dir=="up")
         {
-            monitorX--;
             if(monitorX==1)
                 monitorX=height-1;
+            monitorX--;
         }
         if(dir=="down")
         {
@@ -100,19 +100,32 @@ class Snake
         {
             dir="up";
         }
+        if(GetKeyState('X') & 0x8000/*Check if high-order bit is set (1 << 15)*/)
+        {
+            endOfGame=true;
+        }
     }
 };
 
 int main()
 {
-    Snake game(10,10);
     cout << "\033[2J\033[1;1H";
-    while(game.endOfGame!=true)
+    char ch;
+    cout<<"Snake game!!!\n\n";
+    cout<<"w/a/s/dto move, x to exit the game.\n";
+    cout<<"Press y to play, or any other key to exit:";
+    cin>>ch;
+    Snake game(20,20);
+    if(ch=='y' || ch=='Y')
     {
-        Sleep(250); 
-        game.input();
-        game.map(game.height,game.width);
-        game.work();
+        cout << "\033[2J\033[1;1H";
+        while(game.endOfGame!=true)
+        {
+            Sleep(250); 
+            game.input();
+            game.map(game.height,game.width);
+            game.work();
+        }
     }
     return 0;
 }
